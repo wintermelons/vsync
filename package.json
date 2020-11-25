@@ -1,0 +1,23 @@
+{
+  "name": "vsync",
+  "version": "1.0.0",
+  "description": "Netflix Party but not nearly as good",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wintermelons/vsync.git"
+  },
+  "author": "wintermelons",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wintermelons/vsync/issues"
+  },
+  "homepage": "https://github.com/wintermelons/vsync#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^3.0.3"
+  }
+}
