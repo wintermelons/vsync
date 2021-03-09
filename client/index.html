@@ -3,35 +3,42 @@
   <head>
     <title>Socket.IO chat</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: 0.5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
+      /* * { margin: 0; padding: 0; box-sizing: border-box; } */
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+    <video id="film" controls="" autoplay="" name="media" style="width: 100%; height: 100%; background-color: black;">
+      <source src="https://static.wintermelons.me/downloads/Castle/Castle.S02E11.The.Fifth.Bullet.mp4" type="video/mp4">
+    </video>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(function () {
         var socket = io();
-        $('form').submit(function(e) {
-          e.preventDefault(); // prevents page reloading
-          socket.emit('chat message', $('#m').val());
-          $('#m').val('');
-          return false;
+        var $video = $('#film');
+
+        $video.click(function(e) {
+          console.log("Local: pressed on video");
+          socket.emit('video event', {
+            paused: ! $video[0].paused,  // this is executed before
+            currentTime: $video[0].currentTime,
+          });
         });
-        socket.on('chat message', function(msg){
-          console.log(msg);
-          $('#messages').append($('<li>').text(msg.user + ': ' + msg.message));
+        
+        socket.on('video event', function(event) {
+          console.log(event);
+          
+          if (Math.abs($video[0].currentTime - event.event.currentTime) > 1) {
+            $video[0].currentTime = event.event.currentTime;
+          }
+          
+          if (event.event.paused) {
+            console.log("Remote: pressed paused");
+            $video[0].pause();
+          } else {
+            console.log("Remote: pressed play");
+            $video[0].play();
+          }
         });
       });
     </script>

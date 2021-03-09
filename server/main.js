@@ -16,6 +16,11 @@ app.get('/index', (req, res) => {
   console.log(req.method, req.headers.host, req.url);
 });
 
+app.get('/frame', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/frame.html'));
+  console.log(req.method, req.headers.host, req.url);
+});
+
 io.on('connection', (socket) => {
   // begin: critical section
   var userId = nextId;
@@ -27,12 +32,19 @@ io.on('connection', (socket) => {
     console.log('User', userId, 'disconnected.');
     users.delete(userId);
   });
-  socket.on('chat message', (msg) => {
-    console.log('User', userId, 'says', msg);
+  socket.on('chat message', (message) => {
+    console.log('chat message from user:', userId, 'message:', message);
     users.set(userId, users.get(userId)+1);
-    io.emit('chat message', {
+    socket.broadcast.emit('chat message', {
       user: userId,
       message: msg,
+    });
+  });
+  socket.on('video event', (event) => {
+    console.log('video event from user:', userId, 'event:', event);
+    socket.broadcast.emit('video event', {
+      user: userId,
+      event: event,
     });
   });
 });
